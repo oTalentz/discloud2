@@ -32,6 +32,7 @@ export default function RootLayout({
   return (
     <html lang="pt-br" className={`${playfair.variable} ${sourceSans.variable} antialiased dark`}>
       <body className="font-sans">
+        <div className="grid-background" />
         <LanguageProvider>{children}</LanguageProvider>
       </body>
     </html>

@@ -38,6 +38,8 @@ export default function Dashboard() {
   ])
 
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const reuploadInputRef = useRef<HTMLInputElement>(null)
+  const [reuploadingBotId, setReuploadingBotId] = useState<number | null>(null)
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0]
@@ -63,6 +65,45 @@ export default function Dashboard() {
           ),
         )
       }, 3000)
+    }
+  }
+
+  const handleReupload = (botId: number) => {
+    setReuploadingBotId(botId)
+    reuploadInputRef.current?.click()
+  }
+
+  const handleReuploadFile = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (file && reuploadingBotId) {
+      console.log("[v0] Re-uploading file:", file.name, "for bot:", reuploadingBotId)
+
+      setBots((prev) =>
+        prev.map((bot) =>
+          bot.id === reuploadingBotId ? { ...bot, status: "deploying" as const, lastRestart: "now" } : bot,
+        ),
+      )
+
+      setTimeout(() => {
+        setBots((prev) =>
+          prev.map((bot) =>
+            bot.id === reuploadingBotId
+              ? {
+                  ...bot,
+                  status: "online" as const,
+                  memory: Math.floor(Math.random() * 30) + 10,
+                  cpu: Math.floor(Math.random() * 15) + 5,
+                  uptime: "0m",
+                }
+              : bot,
+          ),
+        )
+        setReuploadingBotId(null)
+      }, 3000)
+    }
+
+    if (event.target) {
+      event.target.value = ""
     }
   }
 
@@ -155,6 +196,7 @@ export default function Dashboard() {
       <div className="p-6 max-w-5xl mx-auto">
         <div className="mb-8">
           <input type="file" ref={fileInputRef} onChange={handleFileUpload} accept=".zip" className="hidden" />
+          <input type="file" ref={reuploadInputRef} onChange={handleReuploadFile} accept=".zip" className="hidden" />
           <Button
             onClick={() => fileInputRef.current?.click()}
             className="w-full h-16 bg-blue-600 hover:bg-blue-700 text-lg font-medium"
@@ -257,6 +299,16 @@ export default function Dashboard() {
                           disabled={bot.status !== "online"}
                         >
                           <RotateCcw className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleReupload(bot.id)}
+                          className="text-zinc-400 hover:text-white"
+                          disabled={bot.status === "deploying" || bot.status === "restarting"}
+                          title="Re-upload bot files"
+                        >
+                          <Upload className="w-4 h-4" />
                         </Button>
                         <Button variant="ghost" size="sm" className="text-zinc-400 hover:text-white">
                           <Eye className="w-4 h-4" />
