@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useRef, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -10,8 +9,11 @@ import { Progress } from "@/components/ui/progress"
 import { Zap, Settings, LogOut, Upload, Play, Pause, Trash2, Server, Eye, RotateCcw } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { useLanguage } from "@/contexts/language-context"
+import { LanguageSelector } from "@/components/language-selector"
 
 export default function Dashboard() {
+  const { t } = useLanguage()
   const [user, setUser] = useState<any>(null)
   const router = useRouter()
   const [bots, setBots] = useState([
@@ -134,7 +136,10 @@ export default function Dashboard() {
             </Badge>
           </div>
           <div className="flex items-center space-x-3">
-            <span className="text-sm text-zinc-400">Olá, {user?.name}</span>
+            <span className="text-sm text-zinc-400">
+              {t("dashboard.welcome")}, {user?.name}
+            </span>
+            <LanguageSelector />
             <Link href="/dashboard/settings">
               <Button variant="ghost" size="sm" className="text-zinc-400 hover:text-white">
                 <Settings className="w-4 h-4" />
@@ -155,11 +160,9 @@ export default function Dashboard() {
             className="w-full h-16 bg-blue-600 hover:bg-blue-700 text-lg font-medium"
           >
             <Upload className="w-5 h-5 mr-3" />
-            Enviar Aplicação (.zip)
+            {t("dashboard.uploadBot")} (.zip)
           </Button>
-          <p className="text-zinc-500 text-sm mt-2 text-center">
-            Arraste e solte ou clique para enviar seu bot em formato ZIP
-          </p>
+          <p className="text-zinc-500 text-sm mt-2 text-center">{t("dashboard.uploadDesc")}</p>
         </div>
 
         <div className="grid grid-cols-3 gap-4 mb-8">
@@ -168,7 +171,7 @@ export default function Dashboard() {
               <div className="text-2xl font-bold text-green-500">
                 {bots.filter((b) => b.status === "online").length}
               </div>
-              <div className="text-sm text-zinc-400">Online</div>
+              <div className="text-sm text-zinc-400">{t("dashboard.online")}</div>
             </CardContent>
           </Card>
           <Card className="bg-zinc-900 border-zinc-800">
@@ -186,7 +189,7 @@ export default function Dashboard() {
         </div>
 
         <div className="space-y-3">
-          <h2 className="text-lg font-medium text-zinc-300 mb-4">Suas Aplicações</h2>
+          <h2 className="text-lg font-medium text-zinc-300 mb-4">{t("dashboard.myBots")}</h2>
 
           {bots.length === 0 ? (
             <Card className="bg-zinc-900 border-zinc-800">
@@ -226,7 +229,9 @@ export default function Dashboard() {
                                   ? "Enviando..."
                                   : bot.status === "restarting"
                                     ? "Reiniciando..."
-                                    : bot.status}
+                                    : bot.status === "online"
+                                      ? t("dashboard.online")
+                                      : t("dashboard.offline")}
                               </span>
                             </span>
                             <span>Uptime: {bot.uptime}</span>

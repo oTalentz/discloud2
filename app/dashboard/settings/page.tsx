@@ -11,8 +11,11 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { ArrowLeft, Zap, User, CreditCard, Bell, Shield, Key, Trash2, Crown, Copy, RefreshCw } from "lucide-react"
 import Link from "next/link"
+import { useLanguage } from "@/contexts/language-context"
+import { LanguageSelector } from "@/components/language-selector"
 
 export default function SettingsPage() {
+  const { t } = useLanguage()
   const [notifications, setNotifications] = useState({
     email: true,
     discord: false,
@@ -38,9 +41,10 @@ export default function SettingsPage() {
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                 <Zap className="w-5 h-5 text-primary-foreground" />
               </div>
-              <span className="text-xl font-bold">Settings</span>
+              <span className="text-xl font-bold">{t("settings.title")}</span>
             </div>
           </div>
+          <LanguageSelector />
         </div>
       </header>
 
@@ -50,7 +54,7 @@ export default function SettingsPage() {
           <CardHeader>
             <div className="flex items-center space-x-2">
               <User className="w-5 h-5" />
-              <CardTitle>Account Settings</CardTitle>
+              <CardTitle>{t("settings.account")}</CardTitle>
             </div>
             <CardDescription>Manage your account information and preferences</CardDescription>
           </CardHeader>
@@ -73,12 +77,32 @@ export default function SettingsPage() {
           </CardContent>
         </Card>
 
+        {/* Language Settings */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center space-x-2">
+              <Zap className="w-5 h-5" />
+              <CardTitle>{t("settings.language")}</CardTitle>
+            </div>
+            <CardDescription>{t("settings.selectLanguage")}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="font-medium">{t("settings.language")}</p>
+                <p className="text-sm text-muted-foreground">{t("settings.selectLanguage")}</p>
+              </div>
+              <LanguageSelector />
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Plan & Billing */}
         <Card>
           <CardHeader>
             <div className="flex items-center space-x-2">
               <CreditCard className="w-5 h-5" />
-              <CardTitle>Plan & Billing</CardTitle>
+              <CardTitle>{t("settings.billing")}</CardTitle>
             </div>
             <CardDescription>Manage your subscription and billing information</CardDescription>
           </CardHeader>
@@ -212,7 +236,7 @@ export default function SettingsPage() {
           <CardHeader>
             <div className="flex items-center space-x-2">
               <Shield className="w-5 h-5" />
-              <CardTitle>Security</CardTitle>
+              <CardTitle>{t("settings.security")}</CardTitle>
             </div>
             <CardDescription>Manage your account security settings</CardDescription>
           </CardHeader>
